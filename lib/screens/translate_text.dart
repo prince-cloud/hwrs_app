@@ -113,12 +113,11 @@ class _TranslateTextState extends State<TranslateText> {
                 if (isLoading) {
                   return;
                 }
-                print("=============================");
-                print(textController.text.toString());
-                print(dropdownvalue);
-                setState(() {
-                  isLoading = true;
-                });
+                setState(
+                  () {
+                    isLoading = true;
+                  },
+                );
                 final results = await translateText(
                   {
                     'text': textController.text.toString(),
@@ -130,6 +129,7 @@ class _TranslateTextState extends State<TranslateText> {
                     translatedText = results['translation'];
                     translatedTextController.text = results['translation'];
                     translateToController.text = results['translated_to'];
+                    translatedTo = results['translated_to'];
                     isLoading = false;
                   },
                 );
@@ -142,36 +142,28 @@ class _TranslateTextState extends State<TranslateText> {
                   : const Text("Translate"),
             ),
           ),
-          SizedBox(height: 10),
-          Card(
-            elevation: 7,
-            child: TextFormInput(
-              child: TextFormField(
-                controller: translatedTextController,
-                minLines: 1,
-                maxLines: 5,
-                keyboardType: TextInputType.multiline,
-                /* onChanged: (value) {
-                                setState(() {
-                                  _email = value;
-                                });
-                              }, */
-                decoration: InputDecoration(
-                  label: Text(
-                    "Translation to $translatedTo",
-                    style: const TextStyle(color: Colors.black87),
+          const SizedBox(
+            height: 10,
+          ),
+          if (translatedTo.isNotEmpty)
+            Card(
+              elevation: 7,
+              child: TextFormInput(
+                child: TextFormField(
+                  controller: translatedTextController,
+                  minLines: 1,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    label: Text(
+                      "Translation to $translatedTo",
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    border: InputBorder.none,
                   ),
-                  border: InputBorder.none,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter text';
-                  }
-                  return null;
-                },
               ),
             ),
-          ),
         ],
       ),
     );

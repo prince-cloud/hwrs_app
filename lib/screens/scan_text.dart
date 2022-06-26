@@ -15,8 +15,11 @@ class ConvertText extends StatefulWidget {
 class _ConvertTextState extends State<ConvertText> {
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
+  TextEditingController docText = TextEditingController();
   String error = "";
-  String docText = "";
+  //String docText = "";
+  bool isLoading = false;
+
   selectImage() {
     return showDialog(
       context: context,
@@ -81,7 +84,6 @@ class _ConvertTextState extends State<ConvertText> {
   @override
   void initState() {
     super.initState();
-    //selectImage();
   }
 
   @override
@@ -92,7 +94,7 @@ class _ConvertTextState extends State<ConvertText> {
         backgroundColor: appBarColor,
         //leading: const Text(""),
         title: const Text(
-          "Convert Text",
+          "Scan Text",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -141,42 +143,100 @@ class _ConvertTextState extends State<ConvertText> {
                         ),
                       ),
                     ),
-                    Form(
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (imageXFile == null) {
-                                  return null;
-                                } else {
-                                  print("calling upload file");
-                                  final Map response = await upload_file(
-                                      imageXFile!.path.toString());
-                                  print(response);
-                                  setState(() {
-                                    docText = response['docText'] as String;
-                                  });
-                                }
-                              },
-                              child: const Text("Scan"),
-                            ),
-                          ),
-                        ],
+                  ],
+                ),
+          if (imageXFile != null)
+            Container(
+              height: 100,
+              padding: const EdgeInsets.all(20),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (isLoading) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      isLoading = true;
+                    },
+                  );
+                  if (imageXFile == null) {
+                    return;
+                  } else {
+                    final Map response = await upload_file(
+                      imageXFile!.path.toString(),
+                    );
+                    setState(
+                      () {
+                        docText.text = response['docText'];
+                        isLoading = false;
+                      },
+                    );
+                  }
+                  setState(
+                    () {},
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.black),
+                ),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Scan"),
+              ),
+            ),
+          if (docText.text.isNotEmpty)
+            Card(
+              elevation: 7,
+              child: TextFormInput(
+                child: TextFormField(
+                  controller: docText,
+                  minLines: 2,
+                  maxLines: 10,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    label: Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        "Scanned Text",
+                        style: TextStyle(
+                          color: Colors.orange,
+                        ),
                       ),
                     ),
-                    Container(
-                      child: Text("your text\n" + docText),
-                    ),
-                  ],
-                )
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
+    );
+  }
+}
+
+class TextFormInput extends StatelessWidget {
+  final Widget child;
+
+  const TextFormInput({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
+      width: size.width * 0.9,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        //borderRadius: BorderRadius.circular(29),
+      ),
+      child: child,
     );
   }
 }
