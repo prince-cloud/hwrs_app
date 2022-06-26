@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hwrs_app/constants.dart';
+import 'package:hwrs_app/services/service.dart';
 
 class TranslateText extends StatefulWidget {
   const TranslateText({Key? key}) : super(key: key);
@@ -10,9 +11,15 @@ class TranslateText extends StatefulWidget {
 
 class _TranslateTextState extends State<TranslateText> {
   TextEditingController textController = TextEditingController();
+  TextEditingController translatedTextController = TextEditingController();
+  TextEditingController translateToController = TextEditingController();
 
   // Initial Selected Value
   String dropdownvalue = 'Spanish';
+  bool isLoading = false;
+
+  String translatedText = "";
+  String translatedTo = "";
 
   var translate_to = [
     'Spanish',
@@ -62,7 +69,7 @@ class _TranslateTextState extends State<TranslateText> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter product title';
+                          return 'Please enter text';
                         }
                         return null;
                       },
@@ -89,6 +96,7 @@ class _TranslateTextState extends State<TranslateText> {
                       setState(
                         () {
                           dropdownvalue = newValue!;
+                          translateToController.text = newValue;
                         },
                       );
                     },
@@ -101,11 +109,67 @@ class _TranslateTextState extends State<TranslateText> {
             height: 100,
             padding: const EdgeInsets.all(20),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (isLoading) {
+                  return;
+                }
+                print("=============================");
+                print(textController.text.toString());
+                print(dropdownvalue);
+                setState(() {
+                  isLoading = true;
+                });
+                final results = await translateText(
+                  {
+                    'text': textController.text.toString(),
+                    'translate_to': dropdownvalue,
+                  },
+                );
+                setState(
+                  () {
+                    translatedText = results['translation'];
+                    translatedTextController.text = results['translation'];
+                    translateToController.text = results['translated_to'];
+                    isLoading = false;
+                  },
+                );
+              },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.black),
               ),
-              child: const Text("Translate"),
+              child: isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text("Translate"),
+            ),
+          ),
+          SizedBox(height: 10),
+          Card(
+            elevation: 7,
+            child: TextFormInput(
+              child: TextFormField(
+                controller: translatedTextController,
+                minLines: 1,
+                maxLines: 5,
+                keyboardType: TextInputType.multiline,
+                /* onChanged: (value) {
+                                setState(() {
+                                  _email = value;
+                                });
+                              }, */
+                decoration: InputDecoration(
+                  label: Text(
+                    "Translation to $translatedTo",
+                    style: const TextStyle(color: Colors.black87),
+                  ),
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter text';
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
         ],

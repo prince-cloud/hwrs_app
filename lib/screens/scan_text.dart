@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hwrs_app/constants.dart';
+import 'package:hwrs_app/services/service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ConvertText extends StatefulWidget {
@@ -14,7 +15,8 @@ class ConvertText extends StatefulWidget {
 class _ConvertTextState extends State<ConvertText> {
   XFile? imageXFile;
   final ImagePicker _picker = ImagePicker();
-
+  String error = "";
+  String docText = "";
   selectImage() {
     return showDialog(
       context: context,
@@ -141,8 +143,35 @@ class _ConvertTextState extends State<ConvertText> {
                     ),
                     Form(
                       child: Column(
-                        children: [],
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (imageXFile == null) {
+                                  return null;
+                                } else {
+                                  print("calling upload file");
+                                  final Map response = await upload_file(
+                                      imageXFile!.path.toString());
+                                  print(response);
+                                  setState(() {
+                                    docText = response['docText'] as String;
+                                  });
+                                }
+                              },
+                              child: const Text("Scan"),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    Container(
+                      child: Text("your text\n" + docText),
                     ),
                   ],
                 )

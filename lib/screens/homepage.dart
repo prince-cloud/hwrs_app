@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hwrs_app/constants.dart';
-import 'package:hwrs_app/screens/convert_text.dart';
+import 'package:hwrs_app/screens/scan_text.dart';
 import 'package:hwrs_app/screens/translate_text.dart';
 import 'package:image_picker/image_picker.dart';
 
