@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hwrs_app/constants.dart';
 import 'package:hwrs_app/screens/scan_text.dart';
+import 'package:hwrs_app/screens/text_to_speech.dart';
 import 'package:hwrs_app/screens/translate_text.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -152,6 +153,69 @@ class _MyHomePageState extends State<MyHomePage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             const TranslateText(),
+                                      ),
+                                    );
+                                  },
+                                  /* icon: SvgPicture.asset(
+                                    "assets/icons/right_arrow.svg",
+                                  ), */
+                                  icon: const Icon(Icons.arrow_right_alt_sharp),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TextToSpeech(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      elevation: 7,
+                      shadowColor: const Color.fromARGB(110, 0, 0, 0),
+                      child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                          child: Container(
+                            width: 130.0,
+                            height: 160.0,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/translate.png",
+                                  height: 70,
+                                  width: 70,
+                                ),
+                                const Text(
+                                  "Text to Speech",
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TextToSpeech(),
                                       ),
                                     );
                                   },

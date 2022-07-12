@@ -58,3 +58,28 @@ Future<Map> translateText(Map data) async {
   Map results = jsonDecode(responseValue.toString());
   return results;
 }
+
+Future<Map> textToSpeech(String text) async {
+  http.MultipartRequest request = http.MultipartRequest(
+    "POST",
+    Uri.parse('http://172.20.10.2:8000/api/texttospeech/'),
+  )..fields['text'] = text;
+
+  request.headers["CONTENT-TYPE"] = "application/json";
+  http.StreamedResponse response;
+  try {
+    response = await request.send();
+  } catch (e) {
+    rethrow;
+  }
+
+  String? responseValue;
+
+  if (response.statusCode != 200) {
+    throw "Response not success";
+  }
+  responseValue = await response.stream.bytesToString();
+
+  Map results = jsonDecode(responseValue.toString());
+  return results;
+}
