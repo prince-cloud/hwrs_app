@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hwrs_app/constants.dart';
 import 'package:hwrs_app/services/service.dart';
 import 'package:image_picker/image_picker.dart';
@@ -208,6 +209,44 @@ class _ConvertTextState extends State<ConvertText> {
                 ),
               ),
             ),
+        ],
+      ),
+      floatingActionButton: SpeedDial(
+        icon: Icons.ios_share_outlined,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.65,
+        spacing: 12,
+        spaceBetweenChildren: 12,
+        backgroundColor: Colors.black,
+        children: [
+          SpeedDialChild(
+            child: const Icon(
+              Icons.picture_as_pdf,
+              size: 17,
+            ),
+            label: 'Export .pdf',
+            onTap: () {
+              /* Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CreateProductPage(),
+                ),
+              ); */
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(
+              Icons.file_copy,
+              size: 17,
+            ),
+            label: 'Export .docx',
+            onTap: () {
+              /* Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CreateProductPage(),
+                ),
+              ); */
+            },
+          ),
         ],
       ),
     );

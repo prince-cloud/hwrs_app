@@ -7,7 +7,6 @@ import 'package:hwrs_app/constants.dart';
 import 'package:hwrs_app/screens/scan_text.dart';
 import 'package:hwrs_app/screens/text_to_speech.dart';
 import 'package:hwrs_app/screens/translate_text.dart';
-import 'package:image_picker/image_picker.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -23,12 +22,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        title: Center(child: Text(widget.title)),
-      ),
       body: ListView(
         children: [
+          Center(
+            child: Image.asset("assets/images/scan_document.png"),
+          ),
           const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
@@ -197,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/images/translate.png",
+                                  "assets/images/text-to-speech.png",
                                   height: 70,
                                   width: 70,
                                 ),

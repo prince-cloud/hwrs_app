@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hwrs_app/screens/homepage.dart';
+import 'package:hwrs_app/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'HWRS'),
+      home: const SplashScreen(),
     );
   }
 }

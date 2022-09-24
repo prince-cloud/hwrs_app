@@ -113,6 +113,7 @@ class _TranslateTextState extends State<TranslateText> {
                 if (isLoading) {
                   return;
                 }
+
                 setState(
                   () {
                     isLoading = true;
@@ -121,7 +122,7 @@ class _TranslateTextState extends State<TranslateText> {
                 final results = await translateText(
                   {
                     'text': textController.text.toString(),
-                    'translate_to': dropdownvalue,
+                    'translate_to': 'es',
                   },
                 );
                 setState(

@@ -1,6 +1,9 @@
-import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hwrs_app/constants.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:hwrs_app/services/service.dart';
 
 class TextToSpeech extends StatefulWidget {
@@ -14,7 +17,19 @@ class _TextToSpeechState extends State<TextToSpeech> {
   TextEditingController textController = TextEditingController();
   String audioUrl = "";
 
-  AudioPlayer player = AudioPlayer();
+  void _requestDownload(String link) async {
+    final taskId = await FlutterDownloader.enqueue(
+      url: 'your download link',
+      savedDir: 'the path of directory where you want to save downloaded files',
+      showNotification:
+          true, // show download progress in status bar (for Android)
+      openFileFromNotification:
+          true, // click on notification to open downloaded file (for Android)
+    );
+  }
+
+  //AudioPlayer player = AudioPlayer();
+  AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +87,7 @@ class _TextToSpeechState extends State<TextToSpeech> {
             padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: () async {
-                audioUrl =
-                    "http://172.20.10.2:8000/media/audio/2022-07-12-0-58-MdvqROk.mp3";
-
-                /* if (textController.text.isEmpty) {
+                if (textController.text.isEmpty) {
                   print("You need to enter a text");
                   return;
                 }
@@ -85,18 +97,23 @@ class _TextToSpeechState extends State<TextToSpeech> {
                 final filename = data['filename'] as String;
 
                 if (data['success']) {
-                  //audioUrl = data['filename'];
-                  audioUrl =
-                      "http://172.20.10.2:8000/media/audio/2022-07-12-0-58-MdvqROk.mp3";
+                  var url = 'https://731e-102-176-94-129.eu.ngrok.io$filename';
+                  print("========== print audio url:  $url");
+                  print("============== printing fileName: $filename");
+                  await AssetsAudioPlayer.newPlayer().open(
+                    Audio.network(
+                      url,
+                    ),
+                    //autoPlay: true,
+                    showNotification: true,
+                  );
 
-                  print("========== print audio url:  $audioUrl");
-                  print("============== printing file name: $filename");
-
-                  var url = 'http://172.20.10.2:8000$audioUrl';
-                  await player.play(UrlSource(url));
+                  setState(() {
+                    audioUrl = url;
+                  });
                 } else {
                   print("Server returned error");
-                } */
+                }
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.black),
@@ -107,7 +124,35 @@ class _TextToSpeechState extends State<TextToSpeech> {
           const SizedBox(
             height: 10,
           ),
+          /* IconButton(
+            onPressed: () async {
+              var testUrl =
+                  "https://www.hitxgh.com/php_system/uploads/2022/07/Kwesi-Arthur-%E2%80%93-Nirvana-Ft.-Kofi-Molewww.hitxgh.com_.mp3";
+
+              await AssetsAudioPlayer.newPlayer().open(
+                Audio.network(
+                  "https://49a4-102-176-94-32.eu.ngrok.io/media/audio/2022-07-24-3-18-yoDy68U.mp3",
+                ),
+                showNotification: true,
+              );
+            },
+            icon: const Icon(
+              Icons.audio_file,
+            ),
+          ), */
         ],
+      ),
+      floatingActionButton: SpeedDial(
+        icon: Icons.download,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.65,
+        spacing: 12,
+        spaceBetweenChildren: 12,
+        backgroundColor: Colors.black,
+        onPress: () {
+          print("button presed");
+          _requestDownload(audioUrl);
+        },
       ),
     );
   }
