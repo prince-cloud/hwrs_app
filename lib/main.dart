@@ -17,8 +17,11 @@ class MyApp extends StatelessWidget {
       title: 'HWRS',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Roboto',
       ),
-      home: const SplashScreen(),
+      home: const MyHomePage(
+        title: "",
+      ),
     );
   }
 }

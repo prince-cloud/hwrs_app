@@ -34,10 +34,10 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Center(child: Text("Smat Scanner")),
+        //title: const Center(child: Text("Smat Scanner")),
       ),
       body: pages[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onTap,
         selectedItemColor: Colors.black54,
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
               //icon: SvgPicture.asset("assets/icons/home2.svg"),
               ),
         ],
-      ),
+      ), */
       //floatingActionButton: customCartButtom(context),
     );
   }
