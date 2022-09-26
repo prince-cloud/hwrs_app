@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-String baseUrl = 'http://172.20.10.5:8000/';
+String baseUrl = 'https://prime-scanner.uzuriglobal.com';
 
 Future<Map> upload_file(String filePath) async {
   //String url = '$baseUrl/api/scantext/';
   http.MultipartRequest request = http.MultipartRequest(
     'POST',
-    Uri.parse('http://172.20.10.5:8000/api/scantext/'),
+    Uri.parse('$baseUrl/api/scantext/'),
   )..files.add(
       await http.MultipartFile.fromPath('image', filePath),
     );
@@ -35,7 +35,7 @@ Future<Map> upload_file(String filePath) async {
 Future<Map> translateText(Map data) async {
   http.MultipartRequest request = http.MultipartRequest(
     "POST",
-    Uri.parse('http://172.20.10.5:8000/api/translate/'),
+    Uri.parse('$baseUrl/api/translate/'),
   )
     ..fields['text'] = data['text'].toString()
     ..fields['translate_to'] = data['translate_to'].toString();
@@ -62,7 +62,7 @@ Future<Map> translateText(Map data) async {
 Future<Map> textToSpeech(String text) async {
   http.MultipartRequest request = http.MultipartRequest(
     "POST",
-    Uri.parse('http://172.20.10.5:8000/api/texttospeech/'),
+    Uri.parse('$baseUrl/api/texttospeech/'),
   )..fields['text'] = text;
 
   request.headers["CONTENT-TYPE"] = "application/json";

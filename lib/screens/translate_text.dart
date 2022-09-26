@@ -15,16 +15,27 @@ class _TranslateTextState extends State<TranslateText> {
   TextEditingController translateToController = TextEditingController();
 
   // Initial Selected Value
-  String dropdownvalue = 'Spanish';
+  String dropdownvalue = 'Twi';
   bool isLoading = false;
 
   String translatedText = "";
   String translatedTo = "";
 
-  var translate_to = [
+  /* var translate_to = [
+    'Twi',
+    'Hausa',
     'Spanish',
     'French',
-  ];
+    'Germen',
+  ]; */
+
+  var translate_to = {
+    'Twi': 'tw',
+    'Hausa': 'ha',
+    'Spanish': 'es',
+    'French': 'fr',
+    'Germen': 'de',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -86,16 +97,16 @@ class _TranslateTextState extends State<TranslateText> {
                     isExpanded: true,
                     value: dropdownvalue,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: translate_to.map((String items) {
+                    items: translate_to.keys.map<DropdownMenuItem>((key) {
                       return DropdownMenuItem(
-                        value: items,
-                        child: Text(items),
+                        value: key,
+                        child: Text(key),
                       );
                     }).toList(),
-                    onChanged: (String? newValue) {
+                    onChanged: (dynamic newValue) {
                       setState(
                         () {
-                          dropdownvalue = newValue!;
+                          dropdownvalue = newValue as String;
                           translateToController.text = newValue;
                         },
                       );
@@ -113,7 +124,13 @@ class _TranslateTextState extends State<TranslateText> {
                 if (isLoading) {
                   return;
                 }
+                if (dropdownvalue.isEmpty) {
+                  return;
+                }
 
+                if (!translate_to.containsKey(dropdownvalue)) {
+                  return;
+                }
                 setState(
                   () {
                     isLoading = true;
@@ -122,7 +139,7 @@ class _TranslateTextState extends State<TranslateText> {
                 final results = await translateText(
                   {
                     'text': textController.text.toString(),
-                    'translate_to': 'es',
+                    'translate_to': translate_to[dropdownvalue],
                   },
                 );
                 setState(

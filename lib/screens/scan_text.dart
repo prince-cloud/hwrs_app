@@ -104,34 +104,44 @@ class _ConvertTextState extends State<ConvertText> {
       body: ListView(
         children: [
           imageXFile == null
-              ? InkWell(
-                  onTap: () {
-                    selectImage();
-                  },
-                  child: Center(
-                    child: Column(
-                      children: const [
-                        SizedBox(
-                          height: 10,
+              ? Column(
+                  children: [
+                    Image.asset("assets/images/ocr.jpg"),
+                    InkWell(
+                      onTap: () {
+                        selectImage();
+                      },
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.camera_alt,
+                              size: 30,
+                              color: Colors.blueGrey,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Text(
+                              "Click to Upload Image",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            )
+                          ],
                         ),
-                        Icon(
-                          Icons.camera_alt,
-                          size: 200,
-                          color: Colors.black54,
-                        ),
-                        Text(
-                          "Upload an Image",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                      ),
+                    )
+                  ],
                 )
               : Column(
                   children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width,
                       height: 300,

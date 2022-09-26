@@ -86,7 +86,7 @@ class _AboutState extends State<About> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 Text(
-                  "Stephani Afram - [ 4601218 ]",
+                  "Afram Stephanie A. Froiwah - [ 4602818 ]",
                 ),
                 Text(
                   "Acheampong Prince - [ 4601218 ]",

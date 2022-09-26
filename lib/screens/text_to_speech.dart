@@ -91,13 +91,15 @@ class _TextToSpeechState extends State<TextToSpeech> {
                   print("You need to enter a text");
                   return;
                 }
+                print(textController.text);
 
                 Map data = await textToSpeech(textController.text);
+
                 print(data);
                 final filename = data['filename'] as String;
 
                 if (data['success']) {
-                  var url = 'https://731e-102-176-94-129.eu.ngrok.io$filename';
+                  var url = 'https://prime-scanner.uzuriglobal.com$filename';
                   print("========== print audio url:  $url");
                   print("============== printing fileName: $filename");
                   await AssetsAudioPlayer.newPlayer().open(
@@ -124,22 +126,6 @@ class _TextToSpeechState extends State<TextToSpeech> {
           const SizedBox(
             height: 10,
           ),
-          /* IconButton(
-            onPressed: () async {
-              var testUrl =
-                  "https://www.hitxgh.com/php_system/uploads/2022/07/Kwesi-Arthur-%E2%80%93-Nirvana-Ft.-Kofi-Molewww.hitxgh.com_.mp3";
-
-              await AssetsAudioPlayer.newPlayer().open(
-                Audio.network(
-                  "https://49a4-102-176-94-32.eu.ngrok.io/media/audio/2022-07-24-3-18-yoDy68U.mp3",
-                ),
-                showNotification: true,
-              );
-            },
-            icon: const Icon(
-              Icons.audio_file,
-            ),
-          ), */
         ],
       ),
       floatingActionButton: SpeedDial(
