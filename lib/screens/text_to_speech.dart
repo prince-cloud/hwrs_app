@@ -1,10 +1,16 @@
 //import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hwrs_app/constants.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:hwrs_app/services/service.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class TextToSpeech extends StatefulWidget {
   const TextToSpeech({Key? key}) : super(key: key);
@@ -16,17 +22,8 @@ class TextToSpeech extends StatefulWidget {
 class _TextToSpeechState extends State<TextToSpeech> {
   TextEditingController textController = TextEditingController();
   String audioUrl = "";
-
-  void _requestDownload(String link) async {
-    final taskId = await FlutterDownloader.enqueue(
-      url: 'your download link',
-      savedDir: 'the path of directory where you want to save downloaded files',
-      showNotification:
-          true, // show download progress in status bar (for Android)
-      openFileFromNotification:
-          true, // click on notification to open downloaded file (for Android)
-    );
-  }
+  final path = getExternalStorageDirectory();
+  bool isLoading = false;
 
   //AudioPlayer player = AudioPlayer();
   AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
@@ -46,8 +43,15 @@ class _TextToSpeechState extends State<TextToSpeech> {
       ),
       body: ListView(
         children: [
+          Container(
+            color: Colors.white,
+            child: Image.asset(
+              "assets/images/texttospeech.jpg",
+              height: 300,
+            ),
+          ),
           const SizedBox(
-            height: 30,
+            height: 25,
           ),
           Form(
             child: Column(
@@ -82,47 +86,101 @@ class _TextToSpeechState extends State<TextToSpeech> {
               ],
             ),
           ),
-          Container(
-            height: 100,
-            padding: const EdgeInsets.all(20),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (textController.text.isEmpty) {
-                  print("You need to enter a text");
-                  return;
-                }
-                print(textController.text);
+          audioUrl.isNotEmpty
+              ? InkWell(
+                  onTap: () async {
+                    await AssetsAudioPlayer.newPlayer().open(
+                      Audio.network(
+                        audioUrl,
+                      ),
+                      //autoPlay: true,
+                      showNotification: true,
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          await AssetsAudioPlayer.newPlayer().open(
+                            Audio.network(
+                              audioUrl,
+                            ),
+                            //autoPlay: true,
+                            showNotification: true,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.volume_mute,
+                        ),
+                      ),
+                      const Text("Play")
+                    ],
+                  ),
+                )
+              : Container(
+                  height: 100,
+                  padding: const EdgeInsets.all(20),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (textController.text.isEmpty) {
+                        Fluttertoast.showToast(
+                          msg: "Text field cannot be empty",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                        return;
+                      }
 
-                Map data = await textToSpeech(textController.text);
+                      if (isLoading) {
+                        return;
+                      }
+                      setState(
+                        () {
+                          isLoading = true;
+                        },
+                      );
 
-                print(data);
-                final filename = data['filename'] as String;
+                      Map data = await textToSpeech(textController.text);
 
-                if (data['success']) {
-                  var url = 'https://prime-scanner.uzuriglobal.com$filename';
-                  print("========== print audio url:  $url");
-                  print("============== printing fileName: $filename");
-                  await AssetsAudioPlayer.newPlayer().open(
-                    Audio.network(
-                      url,
+                      final filename = data['filename'] as String;
+
+                      if (data['success']) {
+                        setState(
+                          () {
+                            isLoading = false;
+                          },
+                        );
+                        var url = '$baseUrl$filename';
+
+                        await AssetsAudioPlayer.newPlayer().open(
+                          Audio.network(
+                            url,
+                          ),
+                          //autoPlay: true,
+                          showNotification: true,
+                        );
+
+                        setState(() {
+                          audioUrl = url;
+                        });
+                      } else {
+                        print("Server returned error");
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.black),
                     ),
-                    //autoPlay: true,
-                    showNotification: true,
-                  );
-
-                  setState(() {
-                    audioUrl = url;
-                  });
-                } else {
-                  print("Server returned error");
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.black),
-              ),
-              child: const Text("Convert"),
-            ),
-          ),
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("Convert"),
+                  ),
+                ),
           const SizedBox(
             height: 10,
           ),
@@ -135,12 +193,51 @@ class _TextToSpeechState extends State<TextToSpeech> {
         spacing: 12,
         spaceBetweenChildren: 12,
         backgroundColor: Colors.black,
-        onPress: () {
-          print("button presed");
-          _requestDownload(audioUrl);
-        },
+        onPress: () => openFile(url: audioUrl, filename: 'file.mp3'),
       ),
     );
+  }
+
+  Future openFile({required String url, String? filename}) async {
+    final file = await downloadFile(url, filename!);
+    if (file == null) {
+      Fluttertoast.showToast(
+        msg: "There is no file to download",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return;
+    }
+    print("=== Path: ${file.path}");
+    OpenFile.open(file.path);
+  }
+
+  Future<File?> downloadFile(String url, String name) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+    final file = File('${appStorage.path}/$name');
+    try {
+      final response = await Dio().get(
+        url,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: 0,
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    } catch (e) {
+      return null;
+      print("=== file download error");
+    }
   }
 }
 

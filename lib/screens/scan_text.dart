@@ -1,10 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hwrs_app/constants.dart';
+import 'package:hwrs_app/global.dart';
 import 'package:hwrs_app/services/service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ConvertText extends StatefulWidget {
   const ConvertText({Key? key}) : super(key: key);
@@ -18,7 +21,6 @@ class _ConvertTextState extends State<ConvertText> {
   final ImagePicker _picker = ImagePicker();
   TextEditingController docText = TextEditingController();
   String error = "";
-  //String docText = "";
   bool isLoading = false;
 
   selectImage() {
@@ -236,30 +238,29 @@ class _ConvertTextState extends State<ConvertText> {
             ),
             label: 'Export .pdf',
             onTap: () {
-              /* Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CreateProductPage(),
-                ),
-              ); */
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(
-              Icons.file_copy,
-              size: 17,
-            ),
-            label: 'Export .docx',
-            onTap: () {
-              /* Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CreateProductPage(),
-                ),
-              ); */
+              if (docText.text == '') return;
+              _createPDF(docText.text);
             },
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _createPDF(String text) async {
+    PdfDocument document = PdfDocument();
+    final page = document.pages.add();
+    page.graphics.drawString(
+      text,
+      PdfStandardFont(
+        PdfFontFamily.helvetica,
+        18,
+      ),
+    );
+    List<int> bytes = await document.save();
+    document.dispose();
+
+    saveAndLauchFile(bytes, 'output.pdf');
   }
 }
 

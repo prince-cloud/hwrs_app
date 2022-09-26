@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hwrs_app/constants.dart';
 import 'package:hwrs_app/services/service.dart';
 
@@ -52,8 +53,15 @@ class _TranslateTextState extends State<TranslateText> {
       ),
       body: ListView(
         children: [
+          Container(
+            color: Colors.white,
+            child: Image.asset(
+              "assets/images/texTranslate.png",
+              height: 250,
+            ),
+          ),
           const SizedBox(
-            height: 30,
+            height: 25,
           ),
           Form(
             child: Column(
@@ -121,6 +129,18 @@ class _TranslateTextState extends State<TranslateText> {
             padding: const EdgeInsets.all(20),
             child: ElevatedButton(
               onPressed: () async {
+                if (textController.text.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: "Text field cannot be empty",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  return;
+                }
                 if (isLoading) {
                   return;
                 }
